@@ -6,9 +6,19 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
+      # eval スクリプトのデフォルト設定 (上書き可)
+      - OPENPI_CONF=${OPENPI_CONF:-pi05_libero}
+      - CKPT_DIR=${CKPT_DIR:-}
+      - LIBERO_SUITE=${LIBERO_SUITE:-libero_object}
+      - NUM_EPISODES=${NUM_EPISODES:-3}
+      - TOTAL_STEPS=${TOTAL_STEPS:-600}
+      - CAMERA_HEIGHT=224
+      - CAMERA_WIDTH=224
     volumes:
       # チェックポイントをホストに永続化 (コンテナ削除後も残る)
       - /opt/checkpoints:/opt/openpi/checkpoints
-      # fine-tuning スクリプト
-      - ../physical-ai-sandbox/src/03_pi0_libero_finetune.py:/src/03_pi0_libero_finetune.py
+      # eval / finetune スクリプト
+      - ../physical-ai-sandbox/src:/workspace/physical-ai-sandbox/src
+      # eval 動画の出力先
+      - /tmp/eval_output:/workspace/physical-ai-sandbox/output
     shm_size: "2g"

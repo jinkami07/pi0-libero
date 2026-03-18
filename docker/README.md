@@ -76,6 +76,28 @@ docker compose run --rm sandbox \
 # 出力: /tmp/output/02_libero_openpi_adaptive_reach_demo.mp4
 ```
 
+### 5. 改良版 eval（ファインチューニング済みモデル対応）
+
+事前学習済みモデルで全タスクを評価（3エピソードずつ）：
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml run --rm sandbox \
+    conda run -n pi0 python src/03_libero_eval_finetuned.py
+```
+
+ファインチューニング済みチェックポイントを使う場合：
+
+```bash
+CKPT_DIR=/opt/checkpoints/pi0_libero_low_mem_finetune/libero_ft/step_30000 \
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml run --rm sandbox \
+    conda run -n pi0 -e CKPT_DIR=$CKPT_DIR \
+    python src/03_libero_eval_finetuned.py
+```
+
+出力：
+- `/tmp/eval_output/ep00_<task>_success.mp4` / `_failure.mp4`
+- `/tmp/eval_output/eval_summary.json`（タスク別成功率）
+
 ### 5. コンテナ停止
 
 ```bash
