@@ -1,0 +1,27 @@
+services:
+  sandbox:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      platforms:
+        - linux/amd64
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-void}
+      - MUJOCO_GL=egl
+      - XLA_PYTHON_CLIENT_PREALLOCATE=false
+      - XLA_PYTHON_CLIENT_MEM_FRACTION=0.6
+      - PASSWORD=sandbox          # VNC password
+      - RESOLUTION=1280x800       # desktop resolution
+    ports:
+      - "5900:5900"   # TigerVNC (VNC client)
+      - "6080:6080"   # noVNC   (web browser)
+    volumes:
+      # physical-ai-sandbox リポジトリを丸ごとマウント
+      # 事前に: git clone https://github.com/hyorimitsu/physical-ai-sandbox.git
+      - ../physical-ai-sandbox:/workspace/physical-ai-sandbox
+      # output: 生成された MP4 をホストに取り出す
+      - /tmp/output:/workspace/physical-ai-sandbox/output
+    working_dir: /workspace/physical-ai-sandbox
+    shm_size: "512m"
+    stdin_open: true
+    tty: true

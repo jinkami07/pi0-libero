@@ -1,0 +1,14 @@
+# GPU 環境 (GCP VM / Linux + nvidia-container-toolkit) 用オーバーライド
+# 使い方: docker compose -f docker-compose.yml -f docker-compose.gpu.yml run --rm sandbox <command>
+services:
+  sandbox:
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      # チェックポイントをホストに永続化 (コンテナ削除後も残る)
+      - /opt/checkpoints:/opt/openpi/checkpoints
+      # fine-tuning スクリプト
+      - ../physical-ai-sandbox/src/03_pi0_libero_finetune.py:/src/03_pi0_libero_finetune.py
+    shm_size: "2g"
